@@ -21,10 +21,12 @@ let product_btn = document
     product.className = "all_product";
     product.dataset.id = productId;
     product.innerHTML = `
-      <p>Name: ${product_name}  price: ${product_price}</p>
+      <p>Name: ${product_name} - Price: ${parseFloat(product_price).toFixed(
+      2
+    )}</p>
       
       <button class="edit_btn">Edit</button>
-      <button>Delete</button>
+      <button class="delete_btn">Delete</button>
     `;
     document.getElementById("product_list").appendChild(product);
 
@@ -45,9 +47,31 @@ document
       currentParent = event.target.parentElement;
       //   console.log(currentParent);
 
-      document.getElementById("edit_name").value =
-        currentParent.querySelector("p").textContent;
+      // document.getElementById("edit_name").value = currentParent.querySelector("p").textContent;
+      const productName = currentParent
+        .querySelector("p")
+        .textContent.split(" - ")[0]
+        .replace("Name:", "");
+      console.log(productName);
+
+      document.getElementById("edit_name").value = productName;
+
+      const productPrice = currentParent
+        .querySelector("p")
+        .textContent.split(" - ")[1]
+        .replace("Price:", "");
+      console.log(productPrice);
+      document.getElementById("edit_price").value = productPrice;
+
       document.getElementById("product_input").style.display = "none";
+    }
+
+    // !delete
+    if (event.target.classList.contains("delete_btn")) {
+      if (confirm("Are You Sure")) {
+        const product_del = event.target.parentElement;
+        document.getElementById("product_list").removeChild(product_del);
+      }
     }
   });
 
@@ -55,7 +79,15 @@ document
 document.getElementById("save_btn").addEventListener("click", function () {
   if (currentParent) {
     const newname = document.getElementById("edit_name").value;
-    currentParent.querySelector("p").textContent = newname;
+    const newprice = document.getElementById("edit_price").value;
+    currentParent.querySelector(
+      "p"
+    ).textContent = `Name: ${newname} - Price: ${parseFloat(newprice).toFixed(
+      2
+    )}`;
+
+    // currentParent.querySelector("p").textContent = newprice;
+
     document.getElementById("product_input").style.display = "block";
     document.getElementById("edit_product").style.display = "none";
   }
@@ -64,4 +96,5 @@ document.getElementById("save_btn").addEventListener("click", function () {
 document.getElementById("cencel").addEventListener("click", function () {
   document.getElementById("product_input").style.display = "block";
   document.getElementById("edit_product").style.display = "none";
+  currentParent = null;
 });
